@@ -9,6 +9,7 @@ All notable changes to Zotero Obsidian Bridge are documented in this file.
 - Add Zotero 10 support by extending the Zotero plugin compatibility range to `10.0.*`.
 - Confirm that the bridge does not depend on Zotero 10's changed collection-selection, search, local HTTP, database, or cookie APIs.
 - Keep compatibility with Zotero 7–9 and with existing `obsidian://zotero-note?citekey=...` links.
+- Fix the generated Zotero update URL to match the repository's `v<version>` Git tag convention.
 
 ### New features
 

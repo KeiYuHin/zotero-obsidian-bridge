@@ -27,7 +27,7 @@ if (shouldPackage) {
   packageRelease(version, {
     zoteroUpdateLink:
       args["zotero-update-link"] ||
-      `https://github.com/${githubRepo}/releases/download/${version}/zotero-citekey-bridge-${version}.xpi`,
+      `https://github.com/${githubRepo}/releases/download/v${version}/zotero-citekey-bridge-${version}.xpi`,
   });
 }
 
