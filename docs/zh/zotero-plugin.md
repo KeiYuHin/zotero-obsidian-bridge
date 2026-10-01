@@ -1,6 +1,6 @@
 # Zotero Citekey Bridge
 
-一个面向 Zotero 7–9 的轻量插件。它从 Zotero / Better BibTeX 读取 citation key，并通过 Obsidian URI 完成文献笔记创建、链接保存和打开。
+一个面向 Zotero 7–10 的轻量插件。它从 Zotero / Better BibTeX 读取 citation key，并通过 Obsidian URI 完成文献笔记创建、链接保存和打开。
 
 ## 已配置参数
 
@@ -50,11 +50,11 @@ config: Object.freeze({
 1. 检查条目 `Extra` 中是否已有 `Obsidian Link:`。
 2. 已存在时停止执行并提醒，避免重复创建。
 3. 读取 citation key，优先顺序：
-   - Zotero 8/9 原生 `citationKey` 字段；
+   - Zotero 8–10 原生 `citationKey` 字段；
    - Better BibTeX `KeyManager.get(item.id).citationKey`；
    - `Extra` 中的 `Citation Key:` 兼容格式。
 4. 调用：
-   `obsidian://zotero-note?citekey=[URL 编码后的 citekey]`
+   `obsidian://zotero-note?citekey=[URL 编码后的 citekey]&file=[URL 编码后的笔记路径]`
 5. 在 Zotero 条目 `Extra` 中保存：
    `Obsidian Link: obsidian://open?vault=ObsidianVault&file=ZoteroLib%2F[citekey]&paneType=tab`
 
@@ -96,10 +96,12 @@ Zotero Citekey Bridge:
 - `bootstrap.js`：Zotero 插件生命周期和窗口加载。
 - `obsidian-zotero-link.js`：右键菜单、citation key 读取、链接保存与打开逻辑。
 
-## Zotero 9 安装修复
+## Zotero 9/10 安装兼容
 
-已在 `manifest.json` 中补充 Zotero 9 要求的
-`applications.zotero.update_url`，并将兼容上限规范为 `9.0.*`。
+`manifest.json` 保留 Zotero 9 要求的
+`applications.zotero.update_url`，并按 Zotero 10 官方迁移文档将兼容上限更新为 `10.0.*`。
+
+本插件只使用条目选择、字段读写、右键菜单和外部协议处理，不使用 Zotero 10 变更的 collection 多选、搜索、本地 HTTP、数据库或 cookie API，因此这些部分无需代码迁移。
 
 当前更新地址指向 GitHub Release 中的 `zotero-updates.json`。正式发版前确认仓库地址为 `KeiYuHin/zotero-obsidian-bridge`，然后用 Makefile 或 release 脚本重新打包。
 

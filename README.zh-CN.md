@@ -46,9 +46,10 @@ config: Object.freeze({
 
 1. 在 Zotero 中选择一条普通文献条目。
 2. 右键选择 `创建并关联 Obsidian 笔记`。
-3. Zotero 端读取 citekey，并打开 `obsidian://zotero-note?citekey=<citekey>`。
+3. Zotero 端读取 citekey，并打开 `obsidian://zotero-note?citekey=<citekey>&file=<笔记路径>`。
 4. Obsidian 端接收 citekey，调用 Zotero Integration 的 `runImport(format, citekey, library)`。
-5. Zotero 端在该条目的 `Extra` 中写入 `Obsidian Link:`，之后可以直接从 Zotero 打开对应笔记。
+5. import 完成后，Obsidian 端会在新标签页自动打开刚导入的 Markdown 笔记。
+6. Zotero 端在该条目的 `Extra` 中写入 `Obsidian Link:`，之后可以直接从 Zotero 打开对应笔记。
 
 写回 Zotero 的 Obsidian 打开链接会带上 `paneType=tab`，因此从 Zotero 打开笔记时会在 Obsidian 新标签页中打开，而不是替换当前活动标签。这个参数来自 Obsidian 官方 [URI 文档](https://obsidian.md/help/uri)。
 
@@ -131,6 +132,8 @@ GitHub Release 中，Zotero 端上传 `.xpi` 和 `zotero-updates.json`；Obsidia
 Obsidian 端插件 ID 保留为 `citekey-import-bridge`，因为当前 Obsidian 社区插件提交规则要求 `id` 不能包含 `obsidian`。
 
 `Citekey Import Bridge` 调用了 Zotero Integration 的 `runImport()` 方法。这个方法很适合当前工作流，但不是正式稳定 API；如果 Zotero Integration 之后改动内部接口，可能需要做一次很小的兼容更新。
+
+Zotero 插件 manifest 当前支持 Zotero 7–10。对照 Zotero 10 开发者迁移文档后，本插件没有使用本次变更涉及的 collection 多选、搜索、本地 HTTP、数据库或 cookie API，因此除兼容版本上限外不需要迁移这些接口。
 
 ## 许可证
 

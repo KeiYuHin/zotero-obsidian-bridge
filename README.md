@@ -48,9 +48,10 @@ If your Obsidian vault is not named `ObsidianVault`, or your notes are not store
 
 1. In Zotero, right-click a regular item and choose `创建并关联 Obsidian 笔记`.
 2. The Zotero plugin resolves the item citekey.
-3. It opens `obsidian://zotero-note?citekey=<citekey>`.
+3. It opens `obsidian://zotero-note?citekey=<citekey>&file=<note-path>`.
 4. The Obsidian plugin receives the citekey and calls Zotero Integration's `runImport(format, citekey, library)`.
-5. The Zotero plugin stores an `Obsidian Link:` in the item's `Extra` field for later opening.
+5. After the import finishes, the Obsidian plugin opens the imported Markdown file in a new tab.
+6. The Zotero plugin stores an `Obsidian Link:` in the item's `Extra` field for later opening.
 
 Stored Obsidian note links include `paneType=tab`, so opening a linked note from Zotero opens it in a new Obsidian tab instead of replacing the current active tab. See Obsidian's [URI documentation](https://obsidian.md/help/uri) for the `paneType` parameter.
 
@@ -101,6 +102,8 @@ For an Obsidian GitHub release, upload `main.js`, `manifest.json`, and optionall
 The Obsidian side intentionally keeps the plugin ID as `citekey-import-bridge`. Current Obsidian community-plugin submission rules require the `id` to avoid the word `obsidian`.
 
 `Citekey Import Bridge` calls Zotero Integration's `runImport()` method. That method is useful and works well for this workflow, but it is not a formally stable public API, so future Zotero Integration updates may require a small compatibility change.
+
+The Zotero plugin manifest supports Zotero 7 through Zotero 10. The Zotero 10 migration does not otherwise affect this plugin: it does not use the changed collection-selection, search, local HTTP, database, or cookie APIs.
 
 ## License
 

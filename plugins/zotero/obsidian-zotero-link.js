@@ -315,7 +315,7 @@ var ZoteroObsidianCitekeyLink = {
 	},
 
 	async getCitationKey(item) {
-		// Zotero 8/9: citation key is a native item field.
+		// Zotero 8-10: citation key is a native item field.
 		try {
 			const nativeKey = this.cleanCitationKey(
 				item.getField("citationKey")
@@ -365,9 +365,12 @@ var ZoteroObsidianCitekeyLink = {
 	},
 
 	buildCreateURL(citekey) {
+		const file = `${this.config.folder}/${citekey}`;
 		return (
 			`${this.config.createBaseURL}?citekey=` +
-			encodeURIComponent(citekey)
+			encodeURIComponent(citekey) +
+			"&file=" +
+			encodeURIComponent(file)
 		);
 	},
 

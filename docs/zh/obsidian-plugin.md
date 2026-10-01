@@ -1,4 +1,4 @@
-Version: 0.1.0
+Version: 0.1.2
 
 管理的文件在
 ObsidianVault\.obsidian\plugins\citekey-import-bridge
@@ -20,7 +20,7 @@ obsidian://zotero-note?citekey=panditFrequencySupportElectric2025
 
 1. **Registers a custom protocol handler** for `zotero-note://` URLs
     
-2. **Extracts parameters** from the URL: citekey, format, and library number
+2. **Extracts parameters** from the URL: citekey, target file, format, and library number
     
 3. **Validates the citekey** (removes @ prefix if present)
     
@@ -28,7 +28,9 @@ obsidian://zotero-note?citekey=panditFrequencySupportElectric2025
     
 5. **Calls the Zotero Integration's import function** with the extracted parameters
     
-6. **Shows success/failure notifications** to the user
+6. **Opens the imported Markdown file in a new tab** after `runImport()` finishes
+
+7. **Shows success/failure notifications** to the user
 
 依赖 [Zotero Integration](https://community.obsidian.md/plugins/obsidian-zotero-desktop-connector) 中的 runImport `zoteroIntegration.runImport()`。它并不是一个稳定发布的API。但是调用的是zotero integration，我这里自己创建了一个叫做 Paper Note 的 Import format。
 
@@ -53,86 +55,8 @@ obsidian://open?vault=ObsidianVault&file=ZoteroLib%2F[citekey]&paneType=tab
 
 因此 Zotero 端 `config.vaultName`、`config.folder` 必须和 Obsidian 端的 vault 名、输出文件夹保持一致。
 
+新版 Zotero 端会把目标 `file` 路径一并传给本插件。为了兼容旧链接，没有 `file` 参数时仍默认打开 `ZoteroLib/[citekey].md`。插件会在 import 完成后确认文件已经进入 vault，再通过 Obsidian workspace API 在新标签页中打开。
+
 这样能在zotero integration中测试好，使用这个东西来外部调用，而跳过zotero integration的UI打断。
 
-```
-const { Notice, Plugin } = require("obsidian");
-
-module.exports = class CitekeyImportBridge extends Plugin {
-  onload() {
-    this.registerObsidianProtocolHandler(
-      "zotero-note",
-      async (params) => {
-        const citekey = String(params.citekey || "")
-          .trim()
-          .replace(/^@/, "");
-
-        const format = String(params.format || "Paper Note").trim();
-
-        const parsedLibrary = Number(params.library || 1);
-        const library = Number.isFinite(parsedLibrary)
-          ? parsedLibrary
-          : 1;
-
-        if (!citekey) {
-          new Notice("Missing citekey parameter");
-          return;
-        }
-
-        try {
-          const pluginManager = this.app.plugins;
-
-          const zoteroIntegration =
-            pluginManager.getPlugin?.(
-              "obsidian-zotero-desktop-connector"
-            ) ||
-            pluginManager.plugins?.[
-              "obsidian-zotero-desktop-connector"
-            ];
-
-          if (!zoteroIntegration) {
-            throw new Error("Zotero Integration plugin not found");
-          }
-
-          if (typeof zoteroIntegration.runImport !== "function") {
-            throw new Error(
-              "Current Zotero Integration does not have a usable runImport method"
-            );
-          }
-
-          await zoteroIntegration.runImport(
-            format,
-            citekey,
-            library
-          );
-
-          new Notice(`Successfully imported reference: ${citekey}`);
-        } catch (error) {
-          console.error("Citekey import failed:", error);
-
-          const message =
-            error instanceof Error
-              ? error.message
-              : String(error);
-
-          new Notice(`Reference import failed: ${message}`, 8000);
-        }
-      }
-    );
-  }
-};
-```
-
-manifest.json
-
-```
-{
-  "id": "citekey-import-bridge",
-  "name": "Citekey Import Bridge",
-  "version": "0.1.0",
-  "minAppVersion": "1.1.1",
-  "description": "Create Zotero literature notes from external Obsidian URLs.",
-  "author": "Yuxuan Qi",
-  "isDesktopOnly": true
-}
-```
+当前实现见 [plugins/obsidian/main.js](../../plugins/obsidian/main.js)，插件元数据见 [plugins/obsidian/manifest.json](../../plugins/obsidian/manifest.json)。文档不再复制完整源码，避免发版后示例与实际实现不同步。

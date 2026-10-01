@@ -1,6 +1,6 @@
 {
   "name": "zotero-obsidian-bridge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Paired Zotero and Obsidian plugins for citekey-based literature-note handoff.",
   "repository": {

@@ -1,4 +1,8 @@
-const { Notice, Plugin } = require("obsidian");
+const { Notice, Plugin, TFile, normalizePath } = require("obsidian");
+
+const DEFAULT_NOTE_FOLDER = "ZoteroLib";
+const FILE_LOOKUP_RETRIES = 20;
+const FILE_LOOKUP_INTERVAL_MS = 100;
 
 module.exports = class CitekeyImportBridge extends Plugin {
   onload() {
@@ -15,6 +19,11 @@ module.exports = class CitekeyImportBridge extends Plugin {
         const library = Number.isFinite(parsedLibrary)
           ? parsedLibrary
           : 1;
+
+        const filePath = this.getImportedNotePath(
+          params.file,
+          citekey
+        );
 
         if (!citekey) {
           new Notice("Missing citekey parameter");
@@ -48,7 +57,17 @@ module.exports = class CitekeyImportBridge extends Plugin {
             library
           );
 
-          new Notice(`Successfully imported reference: ${citekey}`);
+          const opened = await this.openImportedNote(filePath);
+
+          if (!opened) {
+            new Notice(
+              `Imported reference, but could not open note: ${filePath}`,
+              8000
+            );
+            return;
+          }
+
+          new Notice(`Successfully imported and opened: ${citekey}`);
         } catch (error) {
           console.error("Citekey import failed:", error);
 
@@ -61,5 +80,32 @@ module.exports = class CitekeyImportBridge extends Plugin {
         }
       }
     );
+  }
+
+  getImportedNotePath(requestedPath, citekey) {
+    const fallbackPath = `${DEFAULT_NOTE_FOLDER}/${citekey}`;
+    const path = String(requestedPath || fallbackPath).trim();
+    const markdownPath = /\.md$/i.test(path) ? path : `${path}.md`;
+
+    return normalizePath(markdownPath).replace(/^\/+/, "");
+  }
+
+  async openImportedNote(filePath) {
+    for (let attempt = 0; attempt <= FILE_LOOKUP_RETRIES; attempt += 1) {
+      const file = this.app.vault.getAbstractFileByPath(filePath);
+
+      if (file instanceof TFile) {
+        await this.app.workspace.getLeaf(true).openFile(file);
+        return true;
+      }
+
+      if (attempt < FILE_LOOKUP_RETRIES) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, FILE_LOOKUP_INTERVAL_MS)
+        );
+      }
+    }
+
+    return false;
   }
 };

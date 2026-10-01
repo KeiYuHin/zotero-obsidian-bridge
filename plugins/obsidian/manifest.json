@@ -1,9 +1,9 @@
 {
   "id": "citekey-import-bridge",
   "name": "Citekey Import Bridge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "minAppVersion": "1.1.1",
-  "description": "Receive citekeys from external URLs and run Zotero Integration imports.",
+  "description": "Receive citekeys, run Zotero Integration imports, and open the imported note.",
   "author": "Yuxuan Qi",
   "isDesktopOnly": true
 }
