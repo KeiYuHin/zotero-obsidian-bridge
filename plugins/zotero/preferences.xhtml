@@ -1,0 +1,37 @@
+<vbox id="zcb-prefs" onload="Zotero.CitekeyBridge &amp;&amp; Zotero.CitekeyBridge.initPrefsPane(window)">
+	<groupbox>
+		<label><html:h2 id="zcb-title"></html:h2></label>
+		<html:p id="zcb-intro"></html:p>
+
+		<html:div class="zcb-row" style="display:grid;grid-template-columns:max-content 1fr;gap:6px 12px;align-items:center;margin-top:8px">
+			<html:label id="zcb-vault-label" for="zcb-vault"></html:label>
+			<html:input type="text" id="zcb-vault" />
+			<html:span></html:span>
+			<html:small id="zcb-vault-hint" style="opacity:0.75"></html:small>
+
+			<html:label id="zcb-folder-label" for="zcb-folder"></html:label>
+			<html:input type="text" id="zcb-folder" />
+			<html:span></html:span>
+			<html:small id="zcb-folder-hint" style="opacity:0.75"></html:small>
+
+			<html:label id="zcb-format-label" for="zcb-format"></html:label>
+			<html:input type="text" id="zcb-format" />
+			<html:span></html:span>
+			<html:small id="zcb-format-hint" style="opacity:0.75"></html:small>
+		</html:div>
+	</groupbox>
+
+	<groupbox>
+		<label><html:h2 id="zcb-match-title"></html:h2></label>
+		<html:p id="zcb-match-intro"></html:p>
+		<html:ul style="margin-top:4px">
+			<html:li><html:span id="zcb-match-name-label"></html:span> <html:code id="zcb-match-name"></html:code></html:li>
+			<html:li><html:span id="zcb-match-path-label"></html:span> <html:code id="zcb-match-path"></html:code></html:li>
+		</html:ul>
+		<hbox style="margin-top:8px">
+			<button id="zcb-test" />
+			<button id="zcb-reset" />
+		</hbox>
+		<html:p id="zcb-test-status" style="opacity:0.75;margin-top:4px"></html:p>
+	</groupbox>
+</vbox>

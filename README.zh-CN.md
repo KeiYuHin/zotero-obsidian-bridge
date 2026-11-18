@@ -1,139 +1,87 @@
 # Zotero Obsidian Bridge
 
-这是一个面向个人文献工作流的小型开源项目：用一对插件把 Zotero 和 Obsidian 通过 citekey 接起来。
+[English](README.md)
 
-项目包含两个一起维护、一起发版的插件：
+**在 Zotero 里右键一篇文献，Obsidian 会自动生成这篇文献的笔记，并在新标签页打开。** 以后在 Zotero 里右键一下，就能回到这篇笔记。
 
-- **Zotero Citekey Bridge**：Zotero 7+ 插件。它从 Zotero 条目读取 citation key，调用 Obsidian URL，并把 Obsidian 笔记链接写回 Zotero 条目的 `Extra` 字段。
-- **Citekey Import Bridge**：Obsidian 桌面端插件。它接收 `obsidian://zotero-note?citekey=...`，再调用 Zotero Integration 的导入流程创建文献笔记。
+![演示：在 Zotero 右键创建笔记，Obsidian 自动导入并打开](docs/images/demo.gif)
 
-## 依赖
+## 它解决什么问题
 
-- [Zotero](https://www.zotero.org/) 7 或更新版本。
-- [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/installation/)；如果你的 Zotero 已提供原生 `citationKey` 字段，也可以由插件优先读取原生字段。
-- [Obsidian 桌面版](https://obsidian.md/)。
-- Obsidian 的 [Zotero Integration](https://community.obsidian.md/plugins/obsidian-zotero-desktop-connector) 插件，插件 ID 为 `obsidian-zotero-desktop-connector`。
-- 一个名为 `Paper Note` 的 Zotero Integration import format；也可以在 URL 里传入 `format` 参数覆盖默认值。
+用 Zotero 管文献、用 Obsidian 记笔记的人，通常要这样操作：切到 Obsidian，打开命令面板，运行 Zotero Integration，再搜索一遍刚才在 Zotero 里看的那篇文献。下次想从 Zotero 回到笔记时，还得去 Obsidian 里找。
 
-给第一次配置 Obsidian 文献数据库的新手：先看 Obsidian 官方的 [Community plugins](https://obsidian.md/help/community-plugins) 安装说明，再安装 Zotero Integration；Zotero 侧插件安装可参考 Zotero 官方的 [Plugins for Zotero](https://www.zotero.org/support/plugins)，Better BibTeX 则看上面的官方安装页。这样路径更接近网上常见的“Obsidian 文献库/文献数据库”教程：先让 Obsidian 能从 Zotero 导入文献笔记，再安装这个 bridge 做从 Zotero 发起的一键调用。
+这个项目把整个过程变成 Zotero 里的一次右键：
 
-## 必须对应的配置
+| 右键菜单 | 作用 |
+| --- | --- |
+| **创建并关联 Obsidian 笔记** | 在 Obsidian 中生成笔记并打开，同时把笔记链接存进这条文献 |
+| **打开 Obsidian 笔记** | 在 Obsidian 新标签页打开已关联的笔记 |
+| **删除已保存的 Obsidian 链接** | 只删除 Zotero 里存的链接，不删笔记。用于重新关联 |
 
-这里的“仓库名”指 Obsidian 的 vault 名，不是 GitHub repository 名。默认配置假设你的 Obsidian vault 叫 `ObsidianVault`，并且 vault 里有一个文件夹 `ZoteroLib` 用来存放文献笔记。
+项目包含两个小插件，需要配套使用：一个装在 Zotero 里（Zotero Citekey Bridge），一个装在 Obsidian 里（Citekey Import Bridge）。
 
-Obsidian 端需要先配置 Zotero Integration：
+## 开始前你需要准备
 
-- 在 Obsidian vault `ObsidianVault` 中新建文件夹 `ZoteroLib`。
-- 在 Zotero Integration 中新建或修改 import format，名称设为 `Paper Note`。
-- 该 import format 的 `Output path` 设为 `ZoteroLib/{{citekey}}.md`。
+- [Zotero](https://www.zotero.org/download/) 7 或更新版本
+- [Obsidian](https://obsidian.md/download) 桌面版（Windows / macOS / Linux，手机版不支持）
+- 大约 20 分钟
 
-`Paper Note` 这个名字需要和插件默认值完全一致，包括空格和拼写。
+下面还会安装两个现成的插件：Zotero 里的 [Better BibTeX](https://retorque.re/zotero-better-bibtex/installation/)，Obsidian 里的 [Zotero Integration](https://github.com/mgmeyers/obsidian-zotero-integration)。步骤里都有说明。
 
-Zotero 端插件的默认配置必须和上面对应：
+## 快速开始
 
-```js
-config: Object.freeze({
-  vaultName: "ObsidianVault",
-  folder: "ZoteroLib",
-  extraLabel: "Obsidian Link",
-  createBaseURL: "obsidian://zotero-note"
-})
-```
+下面全部使用默认名字。**第一次配置请不要改名**，先跑通，再按 [自定义设置](docs/zh/customize.md) 改。
 
-如果你的 Obsidian vault 不叫 `ObsidianVault`，或文献笔记不放在 `ZoteroLib`，需要同时修改 Zotero 端 `config` 和 Zotero Integration 的 `Output path`。如果你的 import format 不叫 `Paper Note`，则需要在调用 URL 中传入 `format=...`，或修改 Obsidian 端插件里的默认 format。
+| 名字 | 默认值 |
+| --- | --- |
+| Obsidian 库名（vault） | `ObsidianVault` |
+| 文献笔记文件夹 | `ZoteroLib` |
+| 导入格式名（Import Format） | `Paper Note` |
 
-## 工作流
+每一步的详细图文说明见 [安装指南](docs/zh/install.md)。
 
-1. 在 Zotero 中选择一条普通文献条目。
-2. 右键选择 `创建并关联 Obsidian 笔记`。
-3. Zotero 端读取 citekey，并打开 `obsidian://zotero-note?citekey=<citekey>&file=<笔记路径>`。
-4. Obsidian 端接收 citekey，调用 Zotero Integration 的 `runImport(format, citekey, library)`。
-5. import 完成后，Obsidian 端会在新标签页自动打开刚导入的 Markdown 笔记。
-6. Zotero 端在该条目的 `Extra` 中写入 `Obsidian Link:`，之后可以直接从 Zotero 打开对应笔记。
+1. **Zotero：安装 Better BibTeX。** 它负责给每篇文献生成一个唯一的 citekey，例如 `smithDeepLearning2024`。
+   做完你应该看到：在 Zotero 中点开一篇文献，右侧信息栏里有 `Citation Key`。
+2. **Obsidian：新建一个名为 `ObsidianVault` 的库，并在里面建一个文件夹 `ZoteroLib`。**
+   做完你应该看到：Obsidian 左下角显示 `ObsidianVault`，左侧文件列表里有 `ZoteroLib`。
+3. **Obsidian：安装并启用 Zotero Integration。** 设置 → 第三方插件 → 关闭安全模式 → 浏览，搜索 `Zotero Integration`。
+4. **Obsidian：放入笔记模板，并新建导入格式 `Paper Note`。** 把本项目的 [模板](docs/zh/template/paper-note-template.md) 复制进库里，然后在 Zotero Integration 设置中添加 Import Format：
+   - Name：`Paper Note`
+   - Output Path：`ZoteroLib/{{citekey}}.md`
+   - Template File：选择刚才复制的模板
 
-写回 Zotero 的 Obsidian 打开链接会带上 `paneType=tab`，因此从 Zotero 打开笔记时会在 Obsidian 新标签页中打开，而不是替换当前活动标签。这个参数来自 Obsidian 官方 [URI 文档](https://obsidian.md/help/uri)。
+   做完你应该看到：在 Obsidian 中按 `Ctrl+P`（macOS 为 `Cmd+P`），运行 `Zotero Integration: Paper Note`，选一篇文献后，`ZoteroLib` 里出现一篇新笔记。**这一步不成功，后面也不会成功。**
+5. **Obsidian：安装 Citekey Import Bridge。** 从 [Releases](https://github.com/KeiYuHin/zotero-obsidian-bridge/releases/latest) 下载 `citekey-import-bridge-版本号.zip`，解压到 `ObsidianVault/.obsidian/plugins/citekey-import-bridge/`，然后在第三方插件里启用。
+6. **Zotero：安装 Zotero Citekey Bridge。** 从 [Releases](https://github.com/KeiYuHin/zotero-obsidian-bridge/releases/latest) 下载 `zotero-citekey-bridge-版本号.xpi`，在 Zotero 的 工具 → 插件 → 齿轮图标 → 从文件安装插件 中选择它。
+   做完你应该看到：Zotero 设置窗口左侧多了 `Citekey Bridge`。
+7. **试一下。** 保持 Zotero 和 Obsidian 都打开。在 Zotero 中右键一篇文献 → **创建并关联 Obsidian 笔记**。
+   做完你应该看到：Obsidian 弹到前台，在新标签页打开这篇文献的笔记；Zotero 中这条文献的 `Extra` 字段多了一行 `Obsidian Link: ...`。
 
-## Zotero 右键菜单
+## 日常使用
 
-- `创建并关联 Obsidian 笔记`：创建笔记并写回链接；如果已经存在 `Obsidian Link:`，会停止以避免重复创建。
-- `调试：删除 Obsidian 跳转链接`：只删除插件写入的 `Obsidian Link:` 行，不影响其他 `Extra` 内容。
-- `打开 Obsidian 笔记`：读取保存的链接并交给系统打开。
+- **新读一篇文献**：右键 → 创建并关联 Obsidian 笔记。
+- **回到笔记**：右键 → 打开 Obsidian 笔记。笔记模板里也有 `Goto Zotero` 链接，可以从笔记跳回 Zotero。
+- **重新生成笔记**：右键 → 删除已保存的 Obsidian 链接，再创建一次。模板里 `persist` 区块内你写的内容会保留，详见 [模板说明](docs/zh/template/README.md)。
 
-## 默认配置
+只选中**一条普通文献**时菜单才可用。附件、独立笔记、多选时菜单是灰色的；还没关联过的文献，“打开”和“删除”两项也是灰色的。
 
-Zotero 端默认配置在 [plugins/zotero/obsidian-zotero-link.js](plugins/zotero/obsidian-zotero-link.js) 顶部：
+## 遇到问题
 
-```js
-config: Object.freeze({
-  vaultName: "ObsidianVault",
-  folder: "ZoteroLib",
-  extraLabel: "Obsidian Link",
-  createBaseURL: "obsidian://zotero-note"
-})
-```
+最常见的三个原因：
 
-Obsidian 端默认 import format 是 `Paper Note`，默认 library 是 `1`。可以通过 URL 覆盖：
+1. **Zotero 没打开。** Obsidian 导入时要从 Zotero 读数据，Zotero 必须在运行。
+2. **名字没对上。** Zotero 端设置里的库名、文件夹、导入格式名，要和 Obsidian 里的完全一样，包括大小写和空格。
+3. **第 4 步没跑通。** 先确认在 Obsidian 里手动运行 `Zotero Integration: Paper Note` 能生成笔记。
 
-```text
-obsidian://zotero-note?citekey=smithExample2026&format=Paper%20Note&library=1
-```
+其他情况见 [常见问题](docs/zh/troubleshooting.md)。
 
-## 目录结构
+## 更多文档
 
-```text
-plugins/
-  zotero/      Zotero Citekey Bridge 源码
-  obsidian/    Citekey Import Bridge 源码
-docs/zh/       开发笔记和 Zotero Integration 模板
-scripts/       发版脚本
-release/       生成的发布文件，已加入 .gitignore
-```
-
-## 打包与发版
-
-如果安装了 Make：
-
-```sh
-make release VERSION=0.1.0
-```
-
-如果没有 Make：
-
-```sh
-node scripts/release.mjs --version 0.1.0
-```
-
-默认 GitHub 仓库是 `KeiYuHin/zotero-obsidian-bridge`。如果将来给 fork 打包，可以覆盖：
-
-```sh
-make release VERSION=0.1.0 GITHUB_REPO=owner/repo
-```
-
-脚本会同步更新：
-
-- [package.json](package.json)
-- [plugins/zotero/manifest.json](plugins/zotero/manifest.json)
-- [plugins/obsidian/manifest.json](plugins/obsidian/manifest.json)
-- [plugins/obsidian/versions.json](plugins/obsidian/versions.json)
-
-并输出：
-
-- `release/<version>/zotero/zotero-citekey-bridge-<version>.xpi`
-- `release/<version>/zotero/zotero-updates.json`
-- `release/<version>/obsidian/main.js`
-- `release/<version>/obsidian/manifest.json`
-- `release/<version>/obsidian/versions.json`
-- `release/<version>/obsidian/citekey-import-bridge-<version>.zip`
-
-GitHub Release 中，Zotero 端上传 `.xpi` 和 `zotero-updates.json`；Obsidian 端上传 `main.js`、`manifest.json`，也可以附带 `versions.json` 和 zip 方便手动安装。
-
-## 说明
-
-Obsidian 端插件 ID 保留为 `citekey-import-bridge`，因为当前 Obsidian 社区插件提交规则要求 `id` 不能包含 `obsidian`。
-
-`Citekey Import Bridge` 调用了 Zotero Integration 的 `runImport()` 方法。这个方法很适合当前工作流，但不是正式稳定 API；如果 Zotero Integration 之后改动内部接口，可能需要做一次很小的兼容更新。
-
-Zotero 插件 manifest 当前支持 Zotero 7–10。对照 Zotero 10 开发者迁移文档后，本插件没有使用本次变更涉及的 collection 多选、搜索、本地 HTTP、数据库或 cookie API，因此除兼容版本上限外不需要迁移这些接口。
+- [安装指南](docs/zh/install.md)：每一步的详细说明
+- [自定义设置](docs/zh/customize.md)：改库名、文件夹、导入格式名、模板
+- [常见问题](docs/zh/troubleshooting.md)：按症状查原因
+- [模板说明](docs/zh/template/README.md)：模板里每一部分的作用
+- [开发者文档](docs/zh/dev/README.md)：工作原理、URL 接口、打包发版
 
 ## 许可证
 
