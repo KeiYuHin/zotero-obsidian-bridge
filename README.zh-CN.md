@@ -4,7 +4,7 @@
 
 **在 Zotero 里右键一篇文献，Obsidian 会自动生成这篇文献的笔记，并在新标签页打开。** 以后在 Zotero 里右键一下，就能回到这篇笔记。
 
-![TODO：演示 GIF，Zotero 右键 → Obsidian 打开新笔记](docs/images/demo.gif)
+![演示：在 Zotero 右键创建笔记，Obsidian 自动导入并打开](docs/images/demo.gif)
 
 ## 它解决什么问题
 

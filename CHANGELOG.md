@@ -2,7 +2,7 @@
 
 All notable changes to Zotero Obsidian Bridge are documented in this file.
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-11-18
 
 ### New features
 
@@ -14,7 +14,17 @@ All notable changes to Zotero Obsidian Bridge are documented in this file.
 - Obsidian: resolve the note path from the import format's Output Path, and warn when it differs from the Zotero-side folder.
 - Obsidian: do not open a second tab when Zotero Integration has already opened the note.
 
+### Fixes
+
+- Zotero: notification popups now close when clicked. The settings-pane test hint shows inside the pane instead of a popup that could stay on screen.
+
+### Release process
+
+- Release tags no longer use a `v` prefix (`0.2.0`), as Obsidian's community plugin list requires. `manifest.json` and `versions.json` are now also kept at the repository root.
+
 ### Documentation
+
+- Add the demo GIF and screenshots.
 
 - Rewrite the README and add step-by-step install, customization, and troubleshooting guides for new users.
 - Move development notes to `docs/zh/dev/`.

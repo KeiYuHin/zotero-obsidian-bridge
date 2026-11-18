@@ -101,7 +101,7 @@ make release VERSION=0.2.0 GITHUB_REPO=owner/repo
 
 脚本会：
 
-1. 同步版本号到 `package.json`、`plugins/zotero/manifest.json`、`plugins/obsidian/manifest.json`、`plugins/obsidian/versions.json`，并更新 Zotero 端的 `update_url`。
+1. 同步版本号到 `package.json`、`plugins/zotero/manifest.json`、`plugins/obsidian/manifest.json`、`plugins/obsidian/versions.json`，并更新 Zotero 端的 `update_url`。同时把 Obsidian 的 `manifest.json` 和 `versions.json` 复制到仓库根目录，Obsidian 社区插件靠根目录的这两个文件检查更新，不要手动改它们。
 2. 输出到 `release/<version>/`：
 
    ```text
@@ -118,7 +118,7 @@ make release VERSION=0.2.0 GITHUB_REPO=owner/repo
 ### 发 GitHub Release
 
 1. 更新 [CHANGELOG.md](../../../CHANGELOG.md)，运行打包命令，提交。
-2. 打 tag `v<version>`（必须带 `v`，Zotero 的更新地址依赖这个格式）。
+2. 打 tag `<version>`，例如 `0.2.0`，**不带 `v`**。Obsidian 社区插件要求 tag 和 `manifest.json` 里的版本号完全一致，Zotero 更新文件里的下载链接也按这个格式生成。0.1.x 的旧 tag 带 `v`，保持不动。
 3. 新建 Release，上传 `release/<version>/` 下的全部文件：
    - Zotero：`.xpi` 和 `zotero-updates.json`（Zotero 靠它检查自动更新）
    - Obsidian：`main.js`、`manifest.json`、`versions.json`、`.zip`（zip 方便用户手动安装）

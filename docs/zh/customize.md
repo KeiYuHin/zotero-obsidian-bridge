@@ -10,7 +10,7 @@
 
 Zotero 端的设置在：Windows / Linux 为 **编辑 → 设置 → Citekey Bridge**，macOS 为 **Zotero → 设置 → Citekey Bridge**。面板下方会实时显示 Obsidian 端应该怎么填，照着核对即可。
 
-![TODO：Citekey Bridge 设置面板，下方显示应填的 Name 和 Output Path](../images/zotero-settings-pane.png)
+![Zotero 设置中的 Citekey Bridge 面板，下方列出 Obsidian 端应填的 Name 和 Output Path](../images/zotero-settings-pane.png)
 
 ## 用已有的库
 

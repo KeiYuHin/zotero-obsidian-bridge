@@ -35,7 +35,7 @@ Better BibTeX 给每篇文献生成一个唯一的 **citekey**（例如 `smithDe
 3. 点击右上角的**齿轮图标** → **从文件安装插件**（Install Plugin From File），选择刚下载的 `.xpi`。
 4. 按提示重启 Zotero。
 
-![TODO：Zotero 插件窗口，齿轮菜单中的“从文件安装插件”](../images/zotero-install-from-file.png)
+![Zotero 插件管理器：齿轮菜单 → Install Plugin From File](../images/zotero-install-from-file.png)
 
 **检查**：在 Zotero 中点开任意一篇文献，右侧信息栏里能看到 `Citation Key`，后面有一串字符。
 
@@ -64,7 +64,7 @@ Zotero Integration 是一个现成的 Obsidian 插件，负责从 Zotero 读取�
 3. 点击 **社区插件市场** 旁边的 **浏览**（Browse），搜索 `Zotero Integration`，作者是 mgmeyers。
 4. 点击 **安装**（Install），装完点击 **启用**（Enable）。
 
-![TODO：Obsidian 社区插件市场中的 Zotero Integration](../images/obsidian-zotero-integration.png)
+![Obsidian 社区插件市场中的 Zotero Integration](../images/obsidian-zotero-integration.png)
 
 **检查**：设置左侧栏最下面出现 `Zotero Integration`。
 
@@ -102,7 +102,7 @@ Zotero Integration 是一个现成的 Obsidian 插件，负责从 Zotero 读取�
 
    其他字段保持默认。`Paper Note` 中间有一个空格，大小写也要一致。
 
-![TODO：Zotero Integration 的 Import Format 设置](../images/zotero-integration-format.png)
+![Zotero Integration 的 Import Format 设置：Name 和 Output Path](../images/zotero-integration-format.png)
 
 **检查（很重要）**：
 
@@ -137,7 +137,7 @@ Zotero Integration 是一个现成的 Obsidian 插件，负责从 Zotero 读取�
 
 4. 回到 Obsidian，点击 **已安装插件** 右侧的**刷新图标**，在列表里找到 **Citekey Import Bridge**，打开开关。
 
-![TODO：Obsidian 已安装插件列表，Citekey Import Bridge 已启用](../images/obsidian-bridge-enabled.png)
+![Obsidian 已安装插件列表中启用 Citekey Import Bridge](../images/obsidian-bridge-enabled.png)
 
 **检查**：已安装插件列表里，Citekey Import Bridge 的开关是打开的。
 
@@ -160,7 +160,7 @@ Zotero Integration 是一个现成的 Obsidian 插件，负责从 Zotero 读取�
 
 5. 点击 **测试：在 Obsidian 中打开这个库**。
 
-![TODO：Zotero 设置中的 Citekey Bridge 面板](../images/zotero-settings-pane.png)
+![Zotero 设置中的 Citekey Bridge 面板](../images/zotero-settings-pane.png)
 
 **检查**：点击测试按钮后，Obsidian 弹到前台并显示你的库。如果 Obsidian 提示找不到库，说明库名填错了，对照 Obsidian 左下角的库名改正。
 

@@ -27,7 +27,8 @@ if (shouldPackage) {
   packageRelease(version, {
     zoteroUpdateLink:
       args["zotero-update-link"] ||
-      `https://github.com/${githubRepo}/releases/download/v${version}/zotero-citekey-bridge-${version}.xpi`,
+      // Obsidian requires the release tag to equal the version exactly (no "v").
+      `https://github.com/${githubRepo}/releases/download/${version}/zotero-citekey-bridge-${version}.xpi`,
   });
 }
 
@@ -70,6 +71,10 @@ function syncVersions(nextVersion, options) {
     : {};
   versions[nextVersion] = obsidianManifest.minAppVersion;
   writeJson("plugins/obsidian/versions.json", sortVersionMap(versions));
+
+  // Obsidian's community plugin list reads these from the repository root.
+  writeJson("manifest.json", obsidianManifest);
+  writeJson("versions.json", sortVersionMap(versions));
 
   const zoteroManifest = readJson("plugins/zotero/manifest.json");
   zoteroManifest.version = nextVersion;

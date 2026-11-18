@@ -213,7 +213,9 @@ var ZoteroObsidianCitekeyLink = {
 				this.launchObsidianURL(
 					"obsidian://open?vault=" + encodeURIComponent(vault)
 				);
-				this.notify(this.t("prefTestHint", { vault }), 6000);
+				// Show the hint inside the pane: a ProgressWindow opened from the
+				// settings window stays on screen once focus moves to Obsidian.
+				$("zcb-test-status").textContent = this.t("prefTestHint", { vault });
 			}
 			catch (error) {
 				this.handleError(win, this.t("prefTest"), error);
@@ -462,7 +464,7 @@ var ZoteroObsidianCitekeyLink = {
 
 	notify(message, timeout = 3500) {
 		try {
-			const progressWindow = new Zotero.ProgressWindow({ closeOnClick: false });
+			const progressWindow = new Zotero.ProgressWindow({ closeOnClick: true });
 			progressWindow.changeHeadline(this.TITLE);
 			progressWindow.addDescription(String(message));
 			progressWindow.show();
