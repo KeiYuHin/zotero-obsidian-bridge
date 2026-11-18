@@ -90,6 +90,8 @@ function packageRelease(nextVersion, options) {
     "plugins/zotero/manifest.json",
     "plugins/zotero/bootstrap.js",
     "plugins/zotero/obsidian-zotero-link.js",
+    "plugins/zotero/prefs.js",
+    "plugins/zotero/preferences.xhtml",
     "LICENSE",
   ];
   const zoteroArchive = join(zoteroDir, `zotero-citekey-bridge-${nextVersion}.xpi`);

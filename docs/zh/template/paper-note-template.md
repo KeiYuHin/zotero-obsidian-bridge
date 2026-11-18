@@ -5,14 +5,14 @@ publication: "{{publicationTitle}}"
 citekey: {{citekey}}
 key: {{key}}
 DOI: "{{DOI}}"
-paperNoteTemplateVersion: "0.1.0"
+paperNoteTemplateVersion: "0.1.1"
 zoteroImportDate: "{{importDate | format('YYYY-MM-DD HH:mm')}}"
 ---
 # {{title}} ({{date | format ("YYYY")}})
 
 **Publication:** {{autoJournalAbbreviation}}
 
-**Auther:** {{authors}}
+**Authors:** {{authors}}
 
 [Goto Zotero](zotero://select/items/@{{citekey}}), [Goto Obsidian](obsidian://open?vault=ObsidianVault&file=ZoteroLib%2F{{citekey}}&paneType=tab), [Goto Online](https://doi.org/{{DOI}})
 

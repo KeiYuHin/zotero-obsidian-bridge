@@ -13,11 +13,20 @@ async function startup({ id, version, rootURI }) {
 		Zotero.uiReadyPromise
 	]);
 
-	Services.scriptloader.loadSubScript(
-		rootURI + "obsidian-zotero-link.js"
-	);
+	Services.scriptloader.loadSubScript(rootURI + "obsidian-zotero-link.js");
 
 	ZoteroObsidianCitekeyLink.init({ id, version, rootURI });
+	// The settings pane runs in its own window and reaches the plugin here.
+	Zotero.CitekeyBridge = ZoteroObsidianCitekeyLink;
+
+	try {
+		await ZoteroObsidianCitekeyLink.registerPrefsPane();
+	}
+	catch (error) {
+		log("Could not register the settings pane");
+		Zotero.logError(error);
+	}
+
 	ZoteroObsidianCitekeyLink.addToAllWindows();
 }
 
@@ -32,6 +41,9 @@ function onMainWindowUnload({ window }) {
 function shutdown() {
 	log("Shutting down");
 	ZoteroObsidianCitekeyLink?.removeFromAllWindows();
+	if (Zotero.CitekeyBridge === ZoteroObsidianCitekeyLink) {
+		delete Zotero.CitekeyBridge;
+	}
 	ZoteroObsidianCitekeyLink = undefined;
 }
 

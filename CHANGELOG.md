@@ -2,6 +2,30 @@
 
 All notable changes to Zotero Obsidian Bridge are documented in this file.
 
+## 0.2.0 - Unreleased
+
+### New features
+
+- Zotero: add a **Citekey Bridge** settings pane (Settings → Citekey Bridge) for the vault name, note folder, and import format name. Editing the `.xpi` source is no longer needed.
+- Zotero: the settings pane shows the matching Zotero Integration Name and Output Path, and has a button that opens the vault in Obsidian to check the vault name.
+- Zotero: the create URL now passes `vault` and `format`, so the right vault handles it and the Obsidian side needs no format setting.
+- Zotero: menus and messages follow the Zotero UI language (Chinese or English). "Open" and "Remove" are disabled until an item is linked.
+- Obsidian: clearer notices when Zotero Integration is missing, when the import format does not exist (lists available formats), or when the import fails.
+- Obsidian: resolve the note path from the import format's Output Path, and warn when it differs from the Zotero-side folder.
+- Obsidian: do not open a second tab when Zotero Integration has already opened the note.
+
+### Documentation
+
+- Rewrite the README and add step-by-step install, customization, and troubleshooting guides for new users.
+- Move development notes to `docs/zh/dev/`.
+- Template: fix the `Authors` label and bump `paperNoteTemplateVersion` to `0.1.1`.
+
+### 中文摘要
+
+- Zotero 端新增设置面板，可直接修改库名、文件夹、导入格式名，不再需要改代码。
+- Obsidian 端报错提示更清楚，并会检查两边路径是否一致。
+- 重写面向新手的文档：安装指南、自定义设置、常见问题。
+
 ## 0.1.2 - 2026-10-01
 
 ### Compatibility
