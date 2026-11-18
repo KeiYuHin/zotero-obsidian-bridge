@@ -62,6 +62,15 @@ function syncVersions(nextVersion, options) {
   packageJson.version = nextVersion;
   writeJson("package.json", packageJson);
 
+  if (existsSync(path("package-lock.json"))) {
+    const lock = readJson("package-lock.json");
+    lock.version = nextVersion;
+    if (lock.packages?.[""]) {
+      lock.packages[""].version = nextVersion;
+    }
+    writeJson("package-lock.json", lock);
+  }
+
   const obsidianManifest = readJson("plugins/obsidian/manifest.json");
   obsidianManifest.version = nextVersion;
   writeJson("plugins/obsidian/manifest.json", obsidianManifest);

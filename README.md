@@ -1,6 +1,6 @@
-# Zotero Obsidian Bridge
+# Citekey Import Bridge
 
-Paired personal plugins for a citekey-first Zotero to Obsidian literature-note workflow.
+Part of **Zotero Obsidian Bridge**: paired personal plugins for a citekey-first Zotero to Obsidian literature-note workflow.
 
 This repository contains two small plugins that are meant to be versioned and released together:
 

@@ -117,11 +117,16 @@ make release VERSION=0.2.0 GITHUB_REPO=owner/repo
 
 ### 发 GitHub Release
 
-1. 更新 [CHANGELOG.md](../../../CHANGELOG.md)，运行打包命令，提交。
-2. 打 tag `<version>`，例如 `0.2.0`，**不带 `v`**。Obsidian 社区插件要求 tag 和 `manifest.json` 里的版本号完全一致，Zotero 更新文件里的下载链接也按这个格式生成。0.1.x 的旧 tag 带 `v`，保持不动。
-3. 新建 Release，上传 `release/<version>/` 下的全部文件：
+1. 在 [CHANGELOG.md](../../../CHANGELOG.md) 里写好 `## <version> - <日期>` 一节，Release 说明会直接取这一节。
+2. 运行 `npm run version:sync -- --version <version>` 同步版本号，然后提交并合并到 main。
+3. 在 main 上打 tag `<version>` 并推送，例如 `git tag 0.2.1 && git push origin 0.2.1`。**tag 不带 `v`**：Obsidian 社区插件要求 tag 和 `manifest.json` 里的版本号完全一致，Zotero 更新文件里的下载链接也按这个格式生成。0.1.x 的旧 tag 带 `v`，保持不动。
+4. 推送 tag 会触发 GitHub Actions（`.github/workflows/release.yml`）。它会从这个 tag 打包，为发布文件生成构建来源证明（artifact attestation），再创建 Release 并上传全部文件：
    - Zotero：`.xpi` 和 `zotero-updates.json`（Zotero 靠它检查自动更新）
    - Obsidian：`main.js`、`manifest.json`、`versions.json`、`.zip`（zip 方便用户手动安装）
+
+   如果 tag 对应的提交里版本号没有同步，工作流会报错停下。
+
+Obsidian 社区审核会提示 Release 里有 Obsidian 用不到的文件（`.xpi`、`.zip` 等）。这只是建议，Obsidian 只下载 `main.js` 和 `manifest.json`，其他文件不受影响，Zotero 端的自动更新也依赖它们，所以保留。
 
 ### 新增插件文件时
 

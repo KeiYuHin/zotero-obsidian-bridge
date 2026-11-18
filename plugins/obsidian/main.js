@@ -1,4 +1,5 @@
-const { Notice, Plugin, TFile, normalizePath } = require("obsidian");
+const obsidian = require("obsidian");
+const { Notice, Plugin, TFile, normalizePath } = obsidian;
 
 const ZOTERO_INTEGRATION_ID = "obsidian-zotero-desktop-connector";
 const DEFAULT_FORMAT = "Paper Note";
@@ -43,7 +44,12 @@ const STRINGS = {
 
 function language() {
   try {
-    const lang = window.localStorage.getItem("language") || "";
+    // getLanguage() exists from Obsidian 1.8; older versions set moment's
+    // locale to the UI language.
+    const lang =
+      (typeof obsidian.getLanguage === "function"
+        ? obsidian.getLanguage()
+        : obsidian.moment.locale()) || "";
     return lang.toLowerCase().startsWith("zh") ? "zh" : "en";
   } catch (error) {
     return "en";
