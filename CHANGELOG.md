@@ -2,6 +2,18 @@
 
 All notable changes to Zotero Obsidian Bridge are documented in this file.
 
+## 0.2.1 - 2026-11-18
+
+Changes from the Obsidian community review.
+
+- Obsidian: read the UI language with Obsidian's API instead of `localStorage`.
+- README: title now matches the Obsidian plugin name.
+- Releases are built by GitHub Actions from the tag and include artifact attestations. Add `package-lock.json` so builds can be verified.
+
+### 中文摘要
+
+- 按 Obsidian 社区审核的建议修改：界面语言改用 Obsidian 的接口读取，README 标题与插件名一致，Release 改由 GitHub Actions 构建并附带来源证明。
+
 ## 0.2.0 - 2026-11-18
 
 ### New features
