@@ -269,19 +269,19 @@ var ZoteroObsidianCitekeyLink = {
 			win,
 			`${this.MENU_PREFIX}-create`,
 			this.t("menuCreate"),
-			() => this.createAndLink(win)
+			() => this.createAndLink(win, this.requireSelectedRegularItem(win))
 		);
 		const openItem = this.makeMenuItem(
 			win,
 			`${this.MENU_PREFIX}-open`,
 			this.t("menuOpen"),
-			() => this.openStoredLink(win)
+			() => this.openStoredLink(win, this.requireSelectedRegularItem(win))
 		);
 		const deleteItem = this.makeMenuItem(
 			win,
 			`${this.MENU_PREFIX}-delete`,
 			this.t("menuDelete"),
-			() => this.deleteStoredLink(win)
+			() => this.deleteStoredLink(win, this.requireSelectedRegularItem(win))
 		);
 
 		const items = [createItem, openItem, deleteItem];
@@ -325,6 +325,122 @@ var ZoteroObsidianCitekeyLink = {
 		this.windows.delete(win);
 	},
 
+	// ---------- Reader menus ----------
+
+	// Two entry points while reading a PDF/EPUB/snapshot:
+	// - right-click on the reader tab (Zotero 8+, Zotero.MenuManager "main/tab")
+	// - right-click inside the document view (Zotero 7+, Zotero.Reader event)
+	registerReaderMenus() {
+		this.registerTabMenu();
+		this.registerViewMenu();
+	},
+
+	unregisterReaderMenus() {
+		if (this.tabMenuID) {
+			try {
+				Zotero.MenuManager?.unregisterMenu(this.tabMenuID);
+			}
+			catch (error) {
+				Zotero.logError(error);
+			}
+			this.tabMenuID = null;
+		}
+		if (this.viewMenuHandler) {
+			Zotero.Reader?.unregisterEventListener?.(
+				"createViewContextMenu",
+				this.viewMenuHandler
+			);
+			this.viewMenuHandler = null;
+		}
+	},
+
+	registerTabMenu() {
+		if (typeof Zotero.MenuManager?.registerMenu !== "function") {
+			return;
+		}
+
+		const contextItem = (context) => {
+			try {
+				return context.tabType === "reader"
+					? this.resolveRegularItem(context.items?.[0])
+					: null;
+			}
+			catch (error) {
+				return null;
+			}
+		};
+		// Labels are set here instead of through Fluent, so the plugin needs no .ftl files.
+		const showWhen = (key, wantLinked) => (event, context) => {
+			const item = contextItem(context);
+			const visible = Boolean(item) && Boolean(this.getStoredLink(item)) === wantLinked;
+			context.menuElem?.setAttribute("label", this.t(key));
+			context.setVisible(visible);
+		};
+		const run = (action) => (event, context) => {
+			const win = context.menuElem?.ownerGlobal || Zotero.getMainWindow();
+			const label = context.menuElem?.getAttribute("label") || "";
+			Promise.resolve(action(win, contextItem(context))).catch((error) => {
+				this.handleError(win, label, error);
+			});
+		};
+
+		const menuID = Zotero.MenuManager.registerMenu({
+			menuID: `${this.MENU_PREFIX}-tab`,
+			pluginID: this.id,
+			target: "main/tab",
+			menus: [
+				{
+					menuType: "separator",
+					onShowing: (event, context) => context.setVisible(Boolean(contextItem(context)))
+				},
+				{
+					menuType: "menuitem",
+					onShowing: showWhen("menuOpen", true),
+					onCommand: run((win, item) => this.openStoredLink(win, item))
+				},
+				{
+					menuType: "menuitem",
+					onShowing: showWhen("menuCreate", false),
+					onCommand: run((win, item) => this.createAndLink(win, item))
+				}
+			]
+		});
+		this.tabMenuID = menuID || null;
+	},
+
+	registerViewMenu() {
+		if (typeof Zotero.Reader?.registerEventListener !== "function") {
+			return;
+		}
+
+		this.viewMenuHandler = (event) => {
+			const { reader, append } = event;
+			const item = this.itemFromID(reader?.itemID);
+			if (!item) {
+				return;
+			}
+			const win = reader._window || Zotero.getMainWindow();
+			const linked = Boolean(this.getStoredLink(item));
+			const label = this.t(linked ? "menuOpen" : "menuCreate");
+			append({
+				label,
+				onCommand: () => {
+					const action = linked
+						? this.openStoredLink(win, item)
+						: this.createAndLink(win, item);
+					Promise.resolve(action).catch((error) => {
+						this.handleError(win, label, error);
+					});
+				}
+			});
+		};
+		Zotero.Reader.registerEventListener(
+			"createViewContextMenu",
+			this.viewMenuHandler,
+			this.id
+		);
+	},
+
 	makeMenuItem(win, id, label, callback) {
 		const doc = win.document;
 		const menuItem = typeof doc.createXULElement === "function"
@@ -350,6 +466,22 @@ var ZoteroObsidianCitekeyLink = {
 		return item?.isRegularItem?.() ? item : null;
 	},
 
+	// Reader tabs hold the attachment; the note belongs to its parent item.
+	resolveRegularItem(item) {
+		if (!item) {
+			return null;
+		}
+		if (item.isRegularItem?.()) {
+			return item;
+		}
+		const parent = item.parentItem;
+		return parent?.isRegularItem?.() ? parent : null;
+	},
+
+	itemFromID(itemID) {
+		return itemID ? this.resolveRegularItem(Zotero.Items.get(itemID)) : null;
+	},
+
 	requireSelectedRegularItem(win) {
 		const item = this.getSelectedRegularItem(win);
 		if (!item) {
@@ -360,8 +492,7 @@ var ZoteroObsidianCitekeyLink = {
 
 	// ---------- Actions ----------
 
-	async createAndLink(win) {
-		const item = this.requireSelectedRegularItem(win);
+	async createAndLink(win, item) {
 		if (!item) {
 			return;
 		}
@@ -384,8 +515,7 @@ var ZoteroObsidianCitekeyLink = {
 		this.notify(this.t("created", { citekey }), 3500);
 	},
 
-	async deleteStoredLink(win) {
-		const item = this.requireSelectedRegularItem(win);
+	async deleteStoredLink(win, item) {
 		if (!item) {
 			return;
 		}
@@ -404,8 +534,7 @@ var ZoteroObsidianCitekeyLink = {
 		this.alert(win, this.t("deleted"));
 	},
 
-	async openStoredLink(win) {
-		const item = this.requireSelectedRegularItem(win);
+	async openStoredLink(win, item) {
 		if (!item) {
 			return;
 		}
