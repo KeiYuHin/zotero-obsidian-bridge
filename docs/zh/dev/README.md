@@ -30,6 +30,8 @@ Zotero                                   Obsidian
 右键“打开 Obsidian 笔记” ── 打开上面保存的链接 ──▶ Obsidian 新标签页打开笔记
 ```
 
+在 PDF 阅读器里右键标签页或 PDF 页面，走的是同一条流程，条目取 PDF 的父文献。见 [zotero-plugin.md：阅读器菜单](zotero-plugin.md#阅读器菜单)。
+
 两个插件之间只通过 `obsidian://` URL 通信，没有其他耦合。
 
 ## URL 接口
@@ -73,12 +75,13 @@ plugins/
   zotero/        Zotero Citekey Bridge
     manifest.json         插件元数据、Zotero 版本范围、更新地址
     bootstrap.js          生命周期：启动、注册设置面板、窗口加载/卸载
-    obsidian-zotero-link.js  菜单、设置读写、citekey 读取、URL 生成、Extra 读写
+    obsidian-zotero-link.js  菜单（文献列表、阅读器）、设置读写、citekey 读取、URL 生成、Extra 读写
     preferences.xhtml     设置面板界面
     prefs.js              设置项默认值
   obsidian/      Citekey Import Bridge
     main.js / manifest.json / versions.json
-docs/zh/         用户文档、模板、开发文档
+docs/zh/         中文用户文档、模板、开发文档
+docs/en/         英文用户文档（模板与中文版共用 docs/zh/template/）
 scripts/         发版脚本 release.mjs
 release/         打包输出，已加入 .gitignore
 ```

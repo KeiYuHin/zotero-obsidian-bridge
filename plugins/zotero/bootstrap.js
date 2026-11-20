@@ -28,6 +28,14 @@ async function startup({ id, version, rootURI }) {
 	}
 
 	ZoteroObsidianCitekeyLink.addToAllWindows();
+
+	try {
+		ZoteroObsidianCitekeyLink.registerReaderMenus();
+	}
+	catch (error) {
+		log("Could not register the reader menus");
+		Zotero.logError(error);
+	}
 }
 
 function onMainWindowLoad({ window }) {
@@ -41,6 +49,7 @@ function onMainWindowUnload({ window }) {
 function shutdown() {
 	log("Shutting down");
 	ZoteroObsidianCitekeyLink?.removeFromAllWindows();
+	ZoteroObsidianCitekeyLink?.unregisterReaderMenus();
 	if (Zotero.CitekeyBridge === ZoteroObsidianCitekeyLink) {
 		delete Zotero.CitekeyBridge;
 	}

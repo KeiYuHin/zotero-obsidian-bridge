@@ -2,6 +2,27 @@
 
 All notable changes to Zotero Obsidian Bridge are documented in this file.
 
+## 0.3.0 - 2026-11-20
+
+### New features
+
+- Zotero: open or create the Obsidian note from the PDF reader, without going back to the library. Right-click the reader tab (Zotero 8+) or the PDF page (Zotero 7+). Linked items show "Open Obsidian Note"; unlinked items show "Create and Link Obsidian Note".
+- Zotero: in the reader, the note belongs to the PDF's parent item. Standalone PDFs without a parent item show no menu.
+
+### Documentation
+
+- Add full English user guides in `docs/en/`: install, customization, troubleshooting, and the template guide. The English README now matches the Chinese one.
+
+### Compatibility
+
+- The Obsidian plugin is unchanged in this release; its version moves to 0.3.0 because the two plugins are released together.
+
+### 中文摘要
+
+- Zotero 端：在 PDF 阅读器里右键标签页（Zotero 8+）或 PDF 页面（Zotero 7+），即可打开或创建这篇文献的 Obsidian 笔记，不用再退回文献库。
+- 新增完整的英文文档（`docs/en/`），英文 README 与中文版对齐。
+- Obsidian 端无改动，仅随项目统一版本号。
+
 ## 0.2.1 - 2026-11-18
 
 Changes from the Obsidian community review.
