@@ -1,109 +1,110 @@
 # Citekey Import Bridge
 
-Part of **Zotero Obsidian Bridge**: paired personal plugins for a citekey-first Zotero to Obsidian literature-note workflow.
+Part of **Zotero Obsidian Bridge**. [中文说明](README.zh-CN.md)
 
-This repository contains two small plugins that are meant to be versioned and released together:
+**Right-click a paper in Zotero, and Obsidian creates a literature note for it and opens it in a new tab.** Later, one more right-click in Zotero takes you back to that note.
 
-- **Zotero Citekey Bridge**: a Zotero 7+ plugin that reads a citation key, calls an Obsidian URL, and stores an `Obsidian Link:` back on the Zotero item.
-- **Citekey Import Bridge**: an Obsidian desktop plugin that receives `obsidian://zotero-note?citekey=...` links and calls Zotero Integration's import flow.
+![Demo: right-click in Zotero to create a note; Obsidian imports and opens it](docs/images/demo.gif)
 
-中文说明见 [README.zh-CN.md](README.zh-CN.md).
+## What it solves
 
-## Requirements
+If you manage papers in Zotero and take notes in Obsidian, the usual routine is: switch to Obsidian, open the command palette, run Zotero Integration, and search again for the paper you were just looking at in Zotero. To get from Zotero back to the note later, you have to go find it in Obsidian.
 
-- [Zotero](https://www.zotero.org/) 7 or later.
-- [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/installation/), unless your Zotero version exposes a native `citationKey` field.
-- [Obsidian desktop](https://obsidian.md/).
-- [Zotero Integration for Obsidian](https://community.obsidian.md/plugins/obsidian-zotero-desktop-connector), plugin ID `obsidian-zotero-desktop-connector`.
-- A Zotero Integration import format named `Paper Note`, or an explicit `format` query parameter in the URL.
+This project turns all of that into one right-click in Zotero:
 
-For first-time setup, start with Obsidian's official [Community plugins](https://obsidian.md/help/community-plugins) guide, Zotero's official [Plugins for Zotero](https://www.zotero.org/support/plugins) page, and the Zotero Integration plugin page above. This gives newcomers the normal Obsidian-first installation path before adding this bridge.
+| Context menu | What it does |
+| --- | --- |
+| **Create and Link Obsidian Note** | Creates the note in Obsidian, opens it, and saves the note link on the Zotero item |
+| **Open Obsidian Note** | Opens the linked note in a new Obsidian tab |
+| **Remove Saved Obsidian Link** | Removes only the link saved in Zotero, not the note. Use it to re-link |
 
-## Matching Configuration
+While reading in the PDF reader you don't need to go back to the library: right-click the **reader tab** or the **PDF page** to open or create the note for that paper.
 
-In this project, "vault name" means the Obsidian vault name, not the GitHub repository name. The default setup assumes an Obsidian vault named `ObsidianVault` and a folder named `ZoteroLib` inside that vault for literature notes.
+The project has two small plugins that work together: one for Zotero (**Zotero Citekey Bridge**) and one for Obsidian (**Citekey Import Bridge**).
 
-Configure the Obsidian side first:
+## What you need
 
-- Create the folder `ZoteroLib` in the Obsidian vault `ObsidianVault`.
-- In Zotero Integration, create or edit an import format named `Paper Note`.
-- Set that import format's `Output path` to `ZoteroLib/{{citekey}}.md`.
+- [Zotero](https://www.zotero.org/download/) 7 or later
+- [Obsidian](https://obsidian.md/download) desktop (Windows / macOS / Linux; the mobile app is not supported)
+- About 20 minutes
 
-The `Paper Note` name must exactly match the plugin default, including spelling and spaces.
+You will also install two existing plugins: [Better BibTeX](https://retorque.re/zotero-better-bibtex/installation/) for Zotero and [Zotero Integration](https://github.com/mgmeyers/obsidian-zotero-integration) for Obsidian. The steps below cover both.
 
-The Zotero plugin defaults must match those choices:
+## Quick start
 
-```js
-config: Object.freeze({
-  vaultName: "ObsidianVault",
-  folder: "ZoteroLib",
-  extraLabel: "Obsidian Link",
-  createBaseURL: "obsidian://zotero-note"
-})
-```
+Everything below uses the default names. **Don't rename anything on your first setup.** Get it working first, then change names as described in [Customization](docs/en/customize.md).
 
-If your Obsidian vault is not named `ObsidianVault`, or your notes are not stored in `ZoteroLib`, update both the Zotero plugin `config` and Zotero Integration's `Output path`. If your import format is not named `Paper Note`, pass a `format=...` URL parameter or change the Obsidian plugin's default format.
+| Name | Default |
+| --- | --- |
+| Obsidian vault name | `ObsidianVault` |
+| Literature note folder | `ZoteroLib` |
+| Import format name | `Paper Note` |
 
-## Workflow
+For screenshots and details of every step, see the [Install guide](docs/en/install.md).
 
-1. In Zotero, right-click a regular item and choose `创建并关联 Obsidian 笔记`.
-2. The Zotero plugin resolves the item citekey.
-3. It opens `obsidian://zotero-note?citekey=<citekey>&file=<note-path>`.
-4. The Obsidian plugin receives the citekey and calls Zotero Integration's `runImport(format, citekey, library)`.
-5. After the import finishes, the Obsidian plugin opens the imported Markdown file in a new tab.
-6. The Zotero plugin stores an `Obsidian Link:` in the item's `Extra` field for later opening.
+1. **Zotero: install Better BibTeX.** It gives every item a unique citekey, such as `smithDeepLearning2024`.
+   You should see: when you select an item in Zotero, the item pane on the right shows `Citation Key`.
+2. **Obsidian: create a vault named `ObsidianVault` with a folder `ZoteroLib` in it.**
+   You should see: `ObsidianVault` at the bottom left of Obsidian, and `ZoteroLib` in the file list.
+3. **Obsidian: install and enable Zotero Integration.** Settings → Community plugins → Turn on community plugins → Browse, then search for `Zotero Integration`.
+4. **Obsidian: add the note template and create the import format `Paper Note`.** Copy this project's [template](docs/zh/template/paper-note-template.md) into your vault, then add an Import Format in the Zotero Integration settings:
+   - Name: `Paper Note`
+   - Output Path: `ZoteroLib/{{citekey}}.md`
+   - Template File: the template you just copied
 
-Stored Obsidian note links include `paneType=tab`, so opening a linked note from Zotero opens it in a new Obsidian tab instead of replacing the current active tab. See Obsidian's [URI documentation](https://obsidian.md/help/uri) for the `paneType` parameter.
+   You should see: press `Ctrl+P` (`Cmd+P` on macOS), run `Zotero Integration: Paper Note`, pick a paper, and a new note appears in `ZoteroLib`. **If this step fails, nothing after it will work.**
+5. **Obsidian: install Citekey Import Bridge.** Download `citekey-import-bridge-<version>.zip` from [Releases](https://github.com/KeiYuHin/zotero-obsidian-bridge/releases/latest), extract it to `ObsidianVault/.obsidian/plugins/citekey-import-bridge/`, and enable it under Community plugins.
+6. **Zotero: install Zotero Citekey Bridge.** Download `zotero-citekey-bridge-<version>.xpi` from [Releases](https://github.com/KeiYuHin/zotero-obsidian-bridge/releases/latest). In Zotero, go to Tools → Plugins → gear icon → Install Plugin From File and pick it.
+   You should see: `Citekey Bridge` in the left sidebar of Zotero's Settings window.
+7. **Try it.** Keep both Zotero and Obsidian open. In Zotero, right-click a paper → **Create and Link Obsidian Note**.
+   You should see: Obsidian comes to the front and opens the paper's note in a new tab, and the item's `Extra` field in Zotero gains a line `Obsidian Link: ...`.
 
-## Repository Layout
+## Everyday use
 
-```text
-plugins/
-  zotero/      Zotero Citekey Bridge source
-  obsidian/    Citekey Import Bridge source
-docs/zh/       development notes and the Zotero Integration template
-scripts/       release automation
-release/       generated artifacts, ignored by git
-```
+- **Starting a new paper**: right-click → Create and Link Obsidian Note.
+- **Going back to the note**: right-click → Open Obsidian Note. The note template also has a `Goto Zotero` link to jump from the note back to Zotero.
+- **Taking notes while reading the PDF**: right-click the reader tab or the PDF page. Linked papers show "Open Obsidian Note"; unlinked papers show "Create and Link Obsidian Note". The tab menu needs Zotero 8 or later; the PDF page menu works from Zotero 7.
+- **Regenerating a note**: right-click → Remove Saved Obsidian Link, then create again. Anything you wrote inside the template's `persist` block is kept; see the [Template guide](docs/en/template/README.md).
 
-## Release
+In the item list, the menu works only when **exactly one regular item** is selected. With an attachment, a standalone note, or several items selected, the menu is greyed out. For items not linked yet, "Open" and "Remove" are greyed out too.
 
-With Make:
+In the reader, the note belongs to the PDF's parent item. A standalone PDF with no parent item shows no menu. "Remove Saved Obsidian Link" is only in the item list's context menu.
+
+## Troubleshooting
+
+The three most common causes:
+
+1. **Zotero isn't running.** Obsidian reads data from Zotero during the import, so Zotero must be open.
+2. **The names don't match.** The vault name, folder, and import format name in the Zotero settings must exactly match Obsidian, including case and spaces.
+3. **Step 4 didn't work.** First make sure running `Zotero Integration: Paper Note` manually in Obsidian creates a note.
+
+For everything else, see [Troubleshooting](docs/en/troubleshooting.md).
+
+## More docs
+
+- [Install guide](docs/en/install.md): every step in detail
+- [Customization](docs/en/customize.md): change the vault name, folder, import format name, or template
+- [Troubleshooting](docs/en/troubleshooting.md): find the cause by symptom
+- [Template guide](docs/en/template/README.md): what each part of the template does
+- [Developer docs](docs/zh/dev/README.md) (Chinese): how it works, the URL interface, packaging and releases
+
+## For developers
+
+The two plugins share one version number and are released together. Their sources are in `plugins/zotero/` and `plugins/obsidian/`.
 
 ```sh
-make release VERSION=0.1.0
+make release VERSION=0.3.0
+# without make:
+node scripts/release.mjs --version 0.3.0
 ```
 
-Without Make:
+This syncs the version into every manifest and writes the Zotero `.xpi` and `zotero-updates.json`, plus the Obsidian `main.js`, `manifest.json`, `versions.json`, and a zip, to `release/<version>/`. Pushing a tag such as `0.3.0` (no `v` prefix) makes GitHub Actions build and publish the release. See the [developer docs](docs/zh/dev/README.md#打包与发版) for the full release steps.
 
-```sh
-node scripts/release.mjs --version 0.1.0
-```
+Notes:
 
-The default GitHub repository is `KeiYuHin/zotero-obsidian-bridge`. To package for a fork:
-
-```sh
-make release VERSION=0.1.0 GITHUB_REPO=owner/repo
-```
-
-The release command updates internal versions and writes:
-
-- `release/<version>/zotero/zotero-citekey-bridge-<version>.xpi`
-- `release/<version>/zotero/zotero-updates.json`
-- `release/<version>/obsidian/main.js`
-- `release/<version>/obsidian/manifest.json`
-- `release/<version>/obsidian/versions.json`
-- `release/<version>/obsidian/citekey-import-bridge-<version>.zip`
-
-For an Obsidian GitHub release, upload `main.js`, `manifest.json`, and optionally `versions.json` or the zip for manual installs. For a Zotero release, upload the `.xpi` and `zotero-updates.json`.
-
-## Notes
-
-The Obsidian side intentionally keeps the plugin ID as `citekey-import-bridge`. Current Obsidian community-plugin submission rules require the `id` to avoid the word `obsidian`.
-
-`Citekey Import Bridge` calls Zotero Integration's `runImport()` method. That method is useful and works well for this workflow, but it is not a formally stable public API, so future Zotero Integration updates may require a small compatibility change.
-
-The Zotero plugin manifest supports Zotero 7 through Zotero 10. The Zotero 10 migration does not otherwise affect this plugin: it does not use the changed collection-selection, search, local HTTP, database, or cookie APIs.
+- The Obsidian plugin ID is `citekey-import-bridge`. Obsidian's community-plugin rules don't allow the word `obsidian` in plugin IDs.
+- Citekey Import Bridge calls Zotero Integration's `runImport()`. It works well for this workflow but is not a formally stable public API, so a future Zotero Integration update may need a small compatibility fix.
+- The Zotero plugin supports Zotero 7 through 10. The reader-tab menu uses `Zotero.MenuManager`, which Zotero 8 introduced, and is skipped on Zotero 7.
 
 ## License
 

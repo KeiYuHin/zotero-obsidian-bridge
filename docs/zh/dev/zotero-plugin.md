@@ -25,7 +25,23 @@
 
 ## 右键菜单
 
-只在选中**一条普通文献**时可用。“打开”和“删除”只在该文献已有 `Obsidian Link:` 时可用。
+文献列表的菜单挂在 `#zotero-itemmenu` 上，只在选中**一条普通文献**时可用。“打开”和“删除”只在该文献已有 `Obsidian Link:` 时可用。
+
+三个操作都接收一个已经解析好的条目（`createAndLink(win, item)` 等），所以文献列表和阅读器共用同一套逻辑。
+
+### 阅读器菜单
+
+阅读器打开的是附件。`resolveRegularItem()` 把附件换成它的父条目，没有父条目时返回 `null`，菜单不显示。阅读器里根据是否已有链接，只显示“打开”或“创建”中的一项，不提供“删除”。
+
+| 位置 | 接口 | 最低版本 |
+| --- | --- | --- |
+| 阅读器标签页右键 | `Zotero.MenuManager.registerMenu({ target: "main/tab" })` | Zotero 8 |
+| PDF 页面右键 | `Zotero.Reader.registerEventListener("createViewContextMenu")` | Zotero 7 |
+
+- `main/tab` 的上下文里 `items[0]` 是标签页对应的附件，`tabType` 为 `reader` 时才处理。
+- `MenuManager` 的菜单文字只支持 Fluent 的 `l10nID`。为了不引入 `.ftl` 文件，在 `onShowing` 里直接设置 `label`，并用 `setVisible()` 控制显示。
+- 两个接口都会在插件关闭时按 `pluginID` 自动清理，`shutdown()` 里也会显式注销一次。
+- Zotero 7 没有 `Zotero.MenuManager`，此时只注册 PDF 页面菜单。
 
 ### 创建并关联 Obsidian 笔记
 
@@ -64,6 +80,7 @@
 
 - `manifest.json` 保留 Zotero 9 要求的 `applications.zotero.update_url`，兼容上限为 `10.0.*`。
 - 只使用条目选择、字段读写、右键菜单、设置面板和外部协议处理，不涉及 Zotero 10 变更的 collection 多选、搜索、本地 HTTP、数据库或 cookie API。
+- 阅读器标签页菜单依赖 Zotero 8 引入的 `Zotero.MenuManager`，运行时检测，Zotero 7 上自动跳过。
 
 ## 调试
 
